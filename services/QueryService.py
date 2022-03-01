@@ -1,2 +1,2 @@
 class QueryService:
-    
+    pass

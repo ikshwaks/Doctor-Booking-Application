@@ -1,10 +1,9 @@
-from AppoinmentStatus import AppoinmentStatus
+from AppointmentStatus import AppointmentStatus
 
-
-class Appoinment:
+class Appointment:
     def __init__(self, id, patientID, doctorID, slotID) -> None:
         self.id = id
         self.patientID = patientID
         self.doctorID = doctorID
         self.slotID = slotID
-        self.status = AppoinmentStatus.CREATED
+        self.status = AppointmentStatus.CREATED

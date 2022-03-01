@@ -1,7 +1,7 @@
 from collections import defaultdict
 import random
 
-from Appoinment import Appoinment
+from Appointment import Appoinment
 from Doctor import Doctor
 from Patient import Patient
 from Slot import Slot
