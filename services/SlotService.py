@@ -48,3 +48,8 @@ class SlotService:
             # raise
             pass
         self.slotsMap[slotId].setAvailabilityStatus(status)
+    
+    def getSlotInfo(self, slotId):
+        if slotId not in self.slotsMap:
+            raise Exception("Slot ID does not exist")
+        return self.slotsMap[slotId]
