@@ -44,3 +44,23 @@ class BookingService:
     
     def addToWaitlist():
         pass
+
+    def getPatientAppointments(self, patientId):
+        appointments = []
+        for appointment in self.appointmentsMap:
+            if appointment.patientId == patientId and appointment.status == AppointmentStatus.CREATED:
+                appointments.append((id, appointment.doctorId, \
+                    appointment.patientId, \
+                        self.slotService.getSlotTimes(appointment.slotId)))
+        appointments.sort(key = lambda tple:tple[3])
+        return appointments
+    
+    def getDoctorAppointments(self, doctorId):
+        appointments = []
+        for appointment in self.appointmentsMap:
+            if appointment.doctorId == doctorId and appointment.status == AppointmentStatus.CREATED:
+                appointments.append((id, appointment.doctorId, \
+                    appointment.patientId, \
+                        self.slotService.getSlotTimes(appointment.slotId)))
+        appointments.sort(key = lambda tple:tple[3])
+        return appointments

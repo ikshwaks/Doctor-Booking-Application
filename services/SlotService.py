@@ -20,6 +20,7 @@ class SlotService:
             raise OverlappingException("You have a overlapping slot, please book a slot with different timing")
         slot = Slot(slotId, startTime, endTime, doctorId)
         self.slotsMap[slotId] = slot # REVISIT: Think about moving to different method
+        return slot
 
     def getDoctorAvailability(self, doctorId):
         if not isinstance(doctorId, int):
@@ -53,3 +54,12 @@ class SlotService:
         if slotId not in self.slotsMap:
             raise Exception("Slot ID does not exist")
         return self.slotsMap[slotId]
+    
+    def getSlotTimes(self, slotId):
+        if not isinstance(slotId, int):
+            raise InvalidInstanceException(Constants.INVALID_SLOT_ID_ERR_MSG)
+        if slotId not in self.slotsMap:
+            raise Exception(Constants.INVALID_SLOT_ID_ERR_MSG)
+        slot = self.slotsMap[slotId]
+        return (slot.startTime, slot.endTime)
+        

@@ -1,57 +1,42 @@
 from collections import defaultdict
 import random
 
-from Appointment import Appoinment
+from Appointment import Appointment
 from Doctor import Doctor
 from Patient import Patient
 from Slot import Slot
+from exceptions.OverlappingException import OverlappingException
+from services.BookingService import BookingService
+from services.SlotService import SlotService
+from services.UserService import UserService
 from utils import Utils
 
-appointmentsMap = {}
+userService = UserService()
+
+slotService = SlotService()
+
+bookingService = BookingService(slotService)
 
 def bookingManager():
-    str = "1. Register doctor"
-    print(str)
+    try:
+        doctor1 = userService.createDoctor("John", "john@gmail.com")
+        print("Dr. {}'s account created successfully with ID {}".format(doctor1.name, doctor1.id))
 
-    slotStr = "9:30-10:00"
-    times = slotStr.split('-')
-    startTime = int(times[0].split(':')[0]) * 60 + int(times[0].split(':')[1])
-    endTime = int(times[1].split(':')[0]) * 60 + int(times[1].split(':')[1])
-    slotId = random.randint(10001, 20000)
-    if Utils.Utils.isOverlapping(slotsMap, doctorId, startTime, endTime):
-        print("You have overlapping slot, please book a slot with different timing")
-        # TODO
-    slot = Slot(slotId, startTime, endTime, doctorId)
-    slotsMap[slotId] = slot
-    print("Slot created successfully with ID - {}".format(slotId))
-    
-    appointmentId = random.randint(20001, 30000)
-    if Utils.Utils.isConflictingSlot(appointmentsMap, patientId, slotsMap, slotId):
-        print("You have conflicting appointment already, please choose\
-             a new slot with different timing")
-        # TODO
-    appointment = Appoinment(appointmentId, patientId, doctorId, slotId)
-    slotsMap[slotId].availabilty = False
-    appointmentsMap[appointmentId] = appointment
-    print("Appointment created successfully with ID - {}".format(appointmentId))
+        doctor2 = userService.createDoctor("Raju", "raju@gmail.com")
+        print("Dr. {}'s account created successfully with ID {}".format(doctor2.name, doctor2.id))
 
-    # Show slots
-    slotsList = [slot for slotId, slot in slotsMap.items() if slot.doctorId == doctorId]
-    sortedTimeSlots = Utils.Utils.getSortedTimeSlots(slotsList)
-    print(sortedTimeSlots)
+        slot1 = slotService.createSlot(doctor1.id, 230, 260)
+        print("Dr. {} created a slot successfully and its ID is {}".format(doctor1.name, slot1.id))
 
-    # Cancellation of the appointment
-    slotsMap[appointmentsMap[appointmentId].slotId].availability = True
-    appointmentsMap.pop(appointmentId)
+        slot2 = slotService.createSlot(doctor1.id, 255, 285)
+        print("Dr. {} created a slot successfully and its ID is {}".format(doctor1.name, slot2.id))
 
-    # Show appointments
-    appointmentSlotsList = [slotsMap[appointment.slotId] \
-        for appointment in appointmentsMap.values() \
-        if appointment.patientId == patientId]
-    sortedTimeSlots = Utils.Utils.getSortedTimeSlots(appointmentSlotsList)
-    print(sortedTimeSlots)
+        slot3 = slotService.createSlot(doctor2.id, 240, 270)
+        print("Dr. {} created a slot successfully and its ID is {}".format(doctor2.name, slot3.id))
 
-
+    except OverlappingException as oe:
+        print(str(oe))
+    # patient1 = userService.createPatient("")
 
 if __name__ == "__main__":
     bookingManager()
