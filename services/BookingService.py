@@ -17,11 +17,14 @@ class BookingService:
     #     for appoinment in self.appoinmentsMap:
     #         if appoinment.patientId == patientId:
 
-
+    # TODO: doctorId is not needed for booking appointment
     def bookAppointment(self, patientId, doctorId, slotId):
         # TODO: How to handle multiple requests at a time in multi threading
         # environment
-        slot = self.slotService(slotId)
+        slot = self.slotService.getSlotInfo(slotId)
+        # TODO: Instead of using slot object better to use slotService for any purpose
+        # if slot.doctorId != doctorId:
+        #     raise Exception("This slot does not exist for doctor {}".format(doctorId))
         if not slot.isAvailable():
             raise Exception(Constants.SLOT_NOT_AVAILABLE_ERR_MSG)
         if Utils.isConflictingSlot(self.appointmentsMap, patientId, \
@@ -31,7 +34,7 @@ class BookingService:
         appointmentId = random.randint(20001, 30000)
         self.appointmentsMap[appointmentId] = Appointment(appointmentId, \
             patientId, doctorId, slotId)
-        return appointmentId
+        return self.appointmentsMap[appointmentId]
 
     def cancelAppointment(self, appointmentId):
         if not isinstance(appointmentId, int):
@@ -47,7 +50,7 @@ class BookingService:
 
     def getPatientAppointments(self, patientId):
         appointments = []
-        for appointment in self.appointmentsMap:
+        for appointment in self.appointmentsMap.values():
             if appointment.patientId == patientId and appointment.status == AppointmentStatus.CREATED:
                 appointments.append((id, appointment.doctorId, \
                     appointment.patientId, \
@@ -57,7 +60,7 @@ class BookingService:
     
     def getDoctorAppointments(self, doctorId):
         appointments = []
-        for appointment in self.appointmentsMap:
+        for appointment in self.appointmentsMap.values():
             if appointment.doctorId == doctorId and appointment.status == AppointmentStatus.CREATED:
                 appointments.append((id, appointment.doctorId, \
                     appointment.patientId, \
